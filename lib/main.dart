@@ -46,6 +46,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  List<String> cardsList = List<String>();
 
   void _createNewCard() {
     setState(() {
@@ -55,7 +56,12 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      cardsList.add('Dipirona');
     });
+  }
+
+  Widget cardTemplate(medicamento) {
+    return MedicineCard(name: medicamento);
   }
 
   @override
@@ -93,13 +99,8 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(
-              child: ListView.builder(
-                itemBuilder: (context,index){
-                  // TODO: FIX this line
-                  return MedicineCard();
-                }
-                )
-            ),
+                child: getList()
+                ),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.display1,
@@ -113,5 +114,23 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  Widget getList() {
+    if (_counter == 0) {
+      return Center(
+          child: Text('Nenhum medicamento registrado',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.grey
+              )),
+              );
+    }
+    else {
+      return ListView(
+              children: cardsList.map((item) => cardTemplate(item)).toList(),
+            );
+    }
   }
 }
