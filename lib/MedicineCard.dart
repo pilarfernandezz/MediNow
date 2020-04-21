@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trabalho_1/MedicineDetails.dart';
 
 class MedicineCard extends StatelessWidget {
   final String name;
@@ -12,6 +13,12 @@ class MedicineCard extends StatelessWidget {
         title: Text(name),
         trailing: Icon(Icons.keyboard_arrow_right),
         selected: false,
+        onTap: () {
+          Navigator.push(
+            context, 
+            MaterialPageRoute(builder: (context) => MedicineDetails(name: name)),
+          );
+        }
       ),
     );
   }
