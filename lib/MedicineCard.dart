@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trabalho_1/MedicineDetails.dart';
+import 'MedicineDetails.dart';
 
 class MedicineCard extends StatelessWidget {
   final String name;
@@ -9,7 +9,7 @@ class MedicineCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: FlutterLogo(),
+        leading: Image(image: AssetImage('lib/assets/remedio.png'),height: 45, width: 45, ),
         title: Text(name),
         trailing: Icon(Icons.keyboard_arrow_right),
         selected: false,

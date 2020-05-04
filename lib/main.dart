@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'MedicineCreator.dart';
 import 'MedicineCard.dart';
 
 void main() => runApp(MyApp());
@@ -55,8 +56,15 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
-      cardsList.add('Paracetamol');
+
+      _createNewCardDetails().then((String result) {
+        setState(() {
+          var medicineName = result;
+          _counter++;
+          cardsList.add(medicineName.toString());
+        });
+      });
+      
     });
   }
 
@@ -98,11 +106,9 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Expanded(
-                child: getList()
-                ),
+            Expanded(child: getList()),
             Text(
-              '$_counter',
+              '$_counter Remédios',
               style: Theme.of(context).textTheme.display1,
             ),
           ],
@@ -119,18 +125,37 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget getList() {
     if (_counter == 0) {
       return Center(
-          child: Text('Nenhum medicamento registrado',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.grey
-              )),
-              );
-    }
-    else {
+        child: Text('Nenhum medicamento registrado',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, color: Colors.grey)),
+      );
+    } else {
       return ListView(
-              children: cardsList.map((item) => cardTemplate(item)).toList(),
-            );
+        children: cardsList.map((item) => cardTemplate(item)).toList(),
+      );
     }
   }
+
+  Future<String> _createNewCardDetails() async {
+    var result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MedicineCreator()),
+    );
+    if (result == null)
+      return null;
+    else {
+      print("Temos remedio");
+      return result.name;
+    }
+  }
+}
+
+class Medicine {
+  String name;
+  int drugAmmount;
+  int daysSelected;
+  List<String> hoursSelected;
+
+  Medicine(
+      {this.name, this.drugAmmount, this.daysSelected, this.hoursSelected});
 }
