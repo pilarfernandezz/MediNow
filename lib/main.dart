@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'AppStateNotifier.dart';
 import 'MedicineCreator.dart';
 import 'MedicineCard.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(
+    ChangeNotifierProvider<AppStateNotifier>(
+      child: MyApp(), 
+      create: (BuildContext context) =>
+         AppStateNotifier()
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    return Consumer<AppStateNotifier>(
+      builder: (context, appState, child) {
+    
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -22,7 +35,11 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
+      darkTheme: ThemeData.dark(),
       home: MyHomePage(title: 'MediNow'),
+      themeMode: appState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+    );
+      }
     );
   }
 }
@@ -48,6 +65,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   List<String> cardsList = List<String>();
+  bool dark = false;
 
   void _createNewCard() {
     setState(() {
@@ -60,11 +78,16 @@ class _MyHomePageState extends State<MyHomePage> {
       _createNewCardDetails().then((String result) {
         setState(() {
           var medicineName = result;
-          _counter++;
-          cardsList.add(medicineName.toString());
+          if (result == null) {
+            //TODO  Scaffold não existe nesse contexto
+            Scaffold.of(context)
+                .showSnackBar(SnackBar(content: Text("Criação cancelada!")));
+          } else {
+            _counter++;
+            cardsList.add(medicineName.toString());
+          }
         });
       });
-      
     });
   }
 
@@ -84,7 +107,22 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: GestureDetector(
+          onDoubleTap: (){
+            print("Double Tap!");
+                  dark = (dark) ? false: true;
+                  print("dark mode: $dark");
+                  Provider.of<AppStateNotifier>(context, listen: false).updateTheme(dark);
+          },
+          child: Text(widget.title)),
+        // actions: <Widget>[
+        //   Switch(
+        //       value: Provider.of<AppStateNotifier>(context).isDarkMode,
+        //       onChanged: (boolVal) {
+        //         Provider.of<AppStateNotifier>(context, listen: false).updateTheme(boolVal);
+        //       },
+        //     )
+        // ],
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it

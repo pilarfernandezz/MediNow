@@ -74,6 +74,8 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                     Html(
                       data: "<div style='text-align: justify;'>" + snapshot.data.summary.toString() + "</div>",
                       padding: EdgeInsets.all(16),
+                      backgroundColor: Theme.of(context).textTheme.title.backgroundColor,
+                      defaultTextStyle: DefaultTextStyle.of(context).style,
                     )
                   ],
                 ),

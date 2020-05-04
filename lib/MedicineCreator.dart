@@ -32,7 +32,8 @@ class _MedicineCreatorState extends State<MedicineCreator> {
       ),
       body: Container(
         decoration: BoxDecoration(
-          border: Border.all(width: 10, color: Colors.white),
+          color: Theme.of(context).bottomAppBarColor,
+          border: Border.all(width: 10, color: Theme.of(context).bottomAppBarColor),
         ),
         child: Column(
           children: <Widget>[
