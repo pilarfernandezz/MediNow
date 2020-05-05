@@ -47,9 +47,9 @@ class _MedicineDetailsState extends State<MedicineDetails> {
       ),
       body: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).bottomAppBarColor,
+            color: Theme.of(context).scaffoldBackgroundColor,
             border: Border.all(
-                width: 10, color: Theme.of(context).bottomAppBarColor),
+                width: 10, color: Theme.of(context).scaffoldBackgroundColor),
           ),
           child: GridView.count(
             crossAxisCount: 2,
@@ -132,8 +132,19 @@ class _MedicineDetailsState extends State<MedicineDetails> {
           child: widget,
         ),
         decoration: BoxDecoration(
-            color: Theme.of(context).backgroundColor,
-            borderRadius: BorderRadius.circular(50)));
+          boxShadow: [
+      BoxShadow(
+        color: Theme.of(context).focusColor,
+        blurRadius: 5.0, // has the effect of softening the shadow
+        spreadRadius: 5.0, // has the effect of extending the shadow
+        offset: Offset(
+          5.0, // horizontal, move right 10
+          5.0, // vertical, move down 10
+        ),
+      )
+    ],
+        color: Theme.of(context).backgroundColor,
+        borderRadius: BorderRadius.circular(50)));
   }
 
   void _dialogName() {

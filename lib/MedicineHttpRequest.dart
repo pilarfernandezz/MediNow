@@ -41,7 +41,8 @@ class MedicineHttpRequest extends StatefulWidget {
   MedicineHttpRequest({this.name});
 
   @override
-  _MedicineHttpRequestState createState() => _MedicineHttpRequestState(name: name);
+  _MedicineHttpRequestState createState() =>
+      _MedicineHttpRequestState(name: name);
 }
 
 class _MedicineHttpRequestState extends State<MedicineHttpRequest> {
@@ -61,7 +62,7 @@ class _MedicineHttpRequestState extends State<MedicineHttpRequest> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Medicine Details - $name"),
+          title: Text("Infos - $name"),
         ),
         body: FutureBuilder<MedicineJson>(
           future: futureMedicine,
@@ -72,16 +73,18 @@ class _MedicineHttpRequestState extends State<MedicineHttpRequest> {
                 child: Column(
                   children: <Widget>[
                     Html(
-                      data: "<div style='text-align: justify;'>" + snapshot.data.summary.toString() + "</div>",
+                      data: "<div style='text-align: justify;'>" +
+                          snapshot.data.summary.toString() +
+                          "</div>",
                       padding: EdgeInsets.all(16),
-                      backgroundColor: Theme.of(context).textTheme.title.backgroundColor,
+                      backgroundColor:
+                          Theme.of(context).scaffoldBackgroundColor,
                       defaultTextStyle: DefaultTextStyle.of(context).style,
                     )
                   ],
                 ),
               );
             } else if (snapshot.hasError) {
-              print("N Foi");
               return Text("Não encontrado");
             }
 
