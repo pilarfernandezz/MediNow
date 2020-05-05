@@ -32,55 +32,55 @@ class _MedicineCreatorState extends State<MedicineCreator> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: <Widget>[
-            Text(
-              "Nome: ",
-            ),
-            TextField(
-              onChanged: (value) {
-                name = value;
-              },
-              decoration: InputDecoration(
-                hintText: 'Entre o nome do remédio',
+        child: ListView(
+            children: <Widget>[
+              Text(
+                "Nome: ",
               ),
-            ),
-            Padding(padding: EdgeInsets.all(12)),
-            Text("Entre os horários do remédio:"),
-            Padding(padding: EdgeInsets.all(8)),
-            ListTile(
-              leading: GestureDetector(
-                child: Icon(Icons.remove_circle),
-                onTap: _removeTime,
+              TextField(
+                onChanged: (value) {
+        name = value;
+                },
+                decoration: InputDecoration(
+        hintText: 'Entre o nome do remédio',
+                ),
               ),
-              title: Text(concatHoursList(hoursSelected)),
-              trailing: GestureDetector(
-                  child: Icon(Icons.add_circle), onTap: _pickTime),
-            ),
-            Padding(padding: EdgeInsets.all(8)),
-            Text("Quantidade disponível: "),
-            TextField(
-              onChanged: (value) {
-                drugAmmount = int.parse(value);
-              },
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                WhitelistingTextInputFormatter.digitsOnly
-              ],
-              decoration: InputDecoration(
-                  hintText: 'Entre a quantiade de remédio disponível'),
-            ),
-            Padding(padding: EdgeInsets.all(12)),
-            Text("Dias de uso: "),
-            Padding(padding: EdgeInsets.all(8)),
-            DaySelector(
-              onChange: (value) {
-                daysSelected = value;
-              },
-              mode: DaySelector.modeFull,
-            )
-          ],
-        ),
+              Padding(padding: EdgeInsets.all(12)),
+              Text("Entre os horários do remédio:"),
+              Padding(padding: EdgeInsets.all(8)),
+              ListTile(
+                leading: GestureDetector(
+        child: Icon(Icons.remove_circle),
+        onTap: _removeTime,
+                ),
+                title: Text(concatHoursList(hoursSelected)),
+                trailing: GestureDetector(
+          child: Icon(Icons.add_circle), onTap: _pickTime),
+              ),
+              Padding(padding: EdgeInsets.all(8)),
+              Text("Quantidade disponível: "),
+              TextField(
+                onChanged: (value) {
+        drugAmmount = int.parse(value);
+                },
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+        WhitelistingTextInputFormatter.digitsOnly
+                ],
+                decoration: InputDecoration(
+          hintText: 'Entre a quantiade de remédio disponível'),
+              ),
+              Padding(padding: EdgeInsets.all(12)),
+              Text("Dias de uso: "),
+              Padding(padding: EdgeInsets.all(8)),
+              DaySelector(
+                onChange: (value) {
+        daysSelected = value;
+                },
+                mode: DaySelector.modeFull,
+              )
+            ],
+          ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _saveMedicine,
