@@ -45,33 +45,31 @@ class _MedicineDetailsState extends State<MedicineDetails> {
           )
         ],
       ),
-      body: Padding(
+      body: GridView.count(
         padding: const EdgeInsets.all(10.0),
-        child: GridView.count(
-          crossAxisCount: 2,
-          children: <Widget>[
-            GestureDetector(
-              child: createBox(Text(drug.name)),
-              onTap: (editMode) ? _dialogName : null,
-            ),
-            GestureDetector(
-              child: createBox(Text(drug.drugAmmount.toString())),
-              onTap: (editMode) ? _dialogAmmount: null,
-            ),
-            GestureDetector(
-                child: createBox(Text(getDays(drug.daysSelected))),
-                onTap: (editMode) ? _dialogDays : null,
-                ),
-            GestureDetector(
-              child: createBox(createTextDinamically(drug.hoursSelected)),
-              onTap: (editMode) ? _dialogHours: null,
-            ),
-            GestureDetector(
-              child: createBox(Text("Mais informações")),
-              onTap: _goToHttp,
-            )
-          ],
-        ),
+        crossAxisCount: 2,
+        children: <Widget>[
+          GestureDetector(
+            child: createBox(Text(drug.name)),
+            onTap: (editMode) ? _dialogName : null,
+          ),
+          GestureDetector(
+            child: createBox(Text(drug.drugAmmount.toString())),
+            onTap: (editMode) ? _dialogAmmount: null,
+          ),
+          GestureDetector(
+              child: createBox(Text(getDays(drug.daysSelected))),
+              onTap: (editMode) ? _dialogDays : null,
+              ),
+          GestureDetector(
+            child: createBox(createTextDinamically(drug.hoursSelected)),
+            onTap: (editMode) ? _dialogHours: null,
+          ),
+          GestureDetector(
+            child: createBox(Text("Mais informações")),
+            onTap: _goToHttp,
+          )
+        ],
       ),
     );
   }
