@@ -45,37 +45,34 @@ class _MedicineDetailsState extends State<MedicineDetails> {
           )
         ],
       ),
-      body: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            border: Border.all(
-                width: 10, color: Theme.of(context).scaffoldBackgroundColor),
-          ),
-          child: GridView.count(
-            crossAxisCount: 2,
-            children: <Widget>[
-              GestureDetector(
-                child: createBox(Text(drug.name)),
-                onTap: (editMode) ? _dialogName : null,
-              ),
-              GestureDetector(
-                child: createBox(Text(drug.drugAmmount.toString())),
-                onTap: (editMode) ? _dialogAmmount: null,
-              ),
-              GestureDetector(
-                  child: createBox(Text(getDays(drug.daysSelected))),
-                  onTap: (editMode) ? _dialogDays : null,
-                  ),
-              GestureDetector(
-                child: createBox(createTextDinamically(drug.hoursSelected)),
-                onTap: (editMode) ? _dialogHours: null,
-              ),
-              GestureDetector(
-                child: createBox(Text("Mais informações")),
-                onTap: _goToHttp,
-              )
-            ],
-          )),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: GridView.count(
+          crossAxisCount: 2,
+          children: <Widget>[
+            GestureDetector(
+              child: createBox(Text(drug.name)),
+              onTap: (editMode) ? _dialogName : null,
+            ),
+            GestureDetector(
+              child: createBox(Text(drug.drugAmmount.toString())),
+              onTap: (editMode) ? _dialogAmmount: null,
+            ),
+            GestureDetector(
+                child: createBox(Text(getDays(drug.daysSelected))),
+                onTap: (editMode) ? _dialogDays : null,
+                ),
+            GestureDetector(
+              child: createBox(createTextDinamically(drug.hoursSelected)),
+              onTap: (editMode) ? _dialogHours: null,
+            ),
+            GestureDetector(
+              child: createBox(Text("Mais informações")),
+              onTap: _goToHttp,
+            )
+          ],
+        ),
+      ),
     );
   }
 

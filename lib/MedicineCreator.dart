@@ -30,12 +30,8 @@ class _MedicineCreatorState extends State<MedicineCreator> {
       appBar: AppBar(
         title: Text("Adicione novo medicamento"),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          border:
-              Border.all(width: 10, color: Theme.of(context).scaffoldBackgroundColor),
-        ),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           children: <Widget>[
             Text(
@@ -131,47 +127,48 @@ class _MedicineCreatorState extends State<MedicineCreator> {
   _saveMedicine() {
     String erro = "";
 
-    if (name == ""){
+    if (name == "") {
       erro += "- Sem Nome. Digite um nome\n";
     }
-    if(drugAmmount == 0){
+    if (drugAmmount == 0) {
       erro += "- Sem quantidade de remédios. Digite um valor\n";
     }
-    if(daysSelected == 0){
+    if (daysSelected == 0) {
       erro += "- Sem dias selecionados. Selecione pelo menos um dia\n";
     }
-    if(hoursSelected.length == 0){
+    if (hoursSelected.length == 0) {
       erro += "- Sem horários definidos. Selecione pelo menos um horário\n";
-
     }
 
     print(erro);
 
-    if (erro == ""){
-    Medicine med = Medicine(
-        name: name,
-        drugAmmount: drugAmmount,
-        daysSelected: daysSelected,
-        hoursSelected: hoursSelected);
-    Navigator.pop(context, med);
-    }
-    else{
-      var dialog = Dialog(
-      child: Container(
+    if (erro == "") {
+      Medicine med = Medicine(
+          name: name,
+          drugAmmount: drugAmmount,
+          daysSelected: daysSelected,
+          hoursSelected: hoursSelected);
+      Navigator.pop(context, med);
+    } else {
+      var okBtn = FlatButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text("OK"));
+      var dialog = Center(
+        child: Container(
         width: 320,
-        height: 150,
-        margin: EdgeInsets.all(10),
-        child: Column(
-          children: <Widget>[
-            Center(
-              child: Center(child: Text(erro, style: TextStyle(color: Colors.red),))
-            ),
-          ],
-        ),
-      ),
-    );
+        height: 420,
+        child: AlertDialog(
+        title: Text("Campos não preenchidos"),
+        content: Center(child: Text(erro)),
+        actions: <Widget>[
+          okBtn
+        ],
+      ))
+      );
 
-    showDialog(context: context, builder: (BuildContext context) => dialog);
+      showDialog(context: context, builder: (BuildContext context) => dialog);
     }
   }
 }
