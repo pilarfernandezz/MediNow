@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:trabalho_1/Medicine.dart';
 import 'AppStateNotifier.dart';
 import 'MedicineCreator.dart';
 import 'MedicineCard.dart';
@@ -7,10 +8,7 @@ import 'MedicineCard.dart';
 void main() {
   runApp(
     ChangeNotifierProvider<AppStateNotifier>(
-      child: MyApp(), 
-      create: (BuildContext context) =>
-         AppStateNotifier()
-    ),
+        child: MyApp(), create: (BuildContext context) => AppStateNotifier()),
   );
 }
 
@@ -18,29 +16,26 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Consumer<AppStateNotifier>(
-      builder: (context, appState, child) {
-    
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      darkTheme: ThemeData.dark(),
-      home: MyHomePage(title: 'MediNow'),
-      themeMode: appState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-    );
-      }
-    );
+    return Consumer<AppStateNotifier>(builder: (context, appState, child) {
+      return MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.blue,
+        ),
+        darkTheme: ThemeData.dark(),
+        home: MyHomePage(title: 'MediNow'),
+        themeMode: appState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      );
+    });
   }
 }
 
@@ -64,7 +59,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  List<String> cardsList = List<String>();
+  List<Medicine> cardsList = List<Medicine>();
   bool dark = false;
 
   void _createNewCard() {
@@ -75,16 +70,16 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
 
-      _createNewCardDetails().then((String result) {
+      _createNewCardDetails().then((Medicine result) {
         setState(() {
-          var medicineName = result;
+          var medicineValue = result;
           if (result == null) {
-            //TODO  Scaffold não existe nesse contexto
+            //TODO:  Scaffold não existe nesse contexto
             Scaffold.of(context)
                 .showSnackBar(SnackBar(content: Text("Criação cancelada!")));
           } else {
             _counter++;
-            cardsList.add(medicineName.toString());
+            cardsList.add(medicineValue);
           }
         });
       });
@@ -92,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget cardTemplate(medicamento) {
-    return MedicineCard(name: medicamento);
+    return MedicineCard(drug: medicamento);
   }
 
   @override
@@ -108,21 +103,14 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: GestureDetector(
-          onDoubleTap: (){
-            print("Double Tap!");
-                  dark = (dark) ? false: true;
-                  print("dark mode: $dark");
-                  Provider.of<AppStateNotifier>(context, listen: false).updateTheme(dark);
-          },
-          child: Text(widget.title)),
-        // actions: <Widget>[
-        //   Switch(
-        //       value: Provider.of<AppStateNotifier>(context).isDarkMode,
-        //       onChanged: (boolVal) {
-        //         Provider.of<AppStateNotifier>(context, listen: false).updateTheme(boolVal);
-        //       },
-        //     )
-        // ],
+            onDoubleTap: () {
+              print("Double Tap!");
+              dark = (dark) ? false : true;
+              print("dark mode: $dark");
+              Provider.of<AppStateNotifier>(context, listen: false)
+                  .updateTheme(dark);
+            },
+            child: Text(widget.title)),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -174,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<String> _createNewCardDetails() async {
+  Future<Medicine> _createNewCardDetails() async {
     var result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => MedicineCreator()),
@@ -183,17 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return null;
     else {
       print("Temos remedio");
-      return result.name;
+      return result;
     }
   }
-}
-
-class Medicine {
-  String name;
-  int drugAmmount;
-  int daysSelected;
-  List<String> hoursSelected;
-
-  Medicine(
-      {this.name, this.drugAmmount, this.daysSelected, this.hoursSelected});
 }

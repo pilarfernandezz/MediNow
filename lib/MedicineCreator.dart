@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:day_selector/day_selector.dart';
+import 'package:flutter/services.dart';
 
-import 'main.dart';
+import 'Medicine.dart';
 
 class MedicineCreator extends StatefulWidget {
-
   MedicineCreator();
 
   @override
@@ -12,7 +12,7 @@ class MedicineCreator extends StatefulWidget {
 }
 
 class _MedicineCreatorState extends State<MedicineCreator> {
-  String name = " ";
+  String name = "";
   int drugAmmount = 0;
   int daysSelected = 0;
   List<String> hoursSelected = new List();
@@ -33,7 +33,8 @@ class _MedicineCreatorState extends State<MedicineCreator> {
       body: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).bottomAppBarColor,
-          border: Border.all(width: 10, color: Theme.of(context).bottomAppBarColor),
+          border:
+              Border.all(width: 10, color: Theme.of(context).bottomAppBarColor),
         ),
         child: Column(
           children: <Widget>[
@@ -49,52 +50,38 @@ class _MedicineCreatorState extends State<MedicineCreator> {
               ),
             ),
             Padding(padding: EdgeInsets.all(12)),
-            Text("Dias de uso: "),
+            Text("Entre os horários do remédio:"),
             Padding(padding: EdgeInsets.all(8)),
-            DaySelector(
-              onChange: (value) {
-                print('value is $value');
-                if (DaySelector.monday & value == DaySelector.monday) {
-                  print('monday selected');
-                }
-                if (DaySelector.tuesday & value == DaySelector.tuesday) {
-                  print('tuesday selected');
-                }
-                if (DaySelector.wednesday & value == DaySelector.wednesday) {
-                  print('wednesday selected');
-                }
-                if (DaySelector.thursday & value == DaySelector.thursday) {
-                  print('thursday selected');
-                }
-                if (DaySelector.friday & value == DaySelector.friday) {
-                  print('friday selected');
-                }
-                if (DaySelector.saturday & value == DaySelector.saturday) {
-                  print('saturday selected');
-                }
-                if (DaySelector.sunday & value == DaySelector.sunday) {
-                  print('sunday selected');
-                }
-                daysSelected = value;
-              },
-              mode: DaySelector.modeFull,
+            ListTile(
+              leading: GestureDetector(
+                child: Icon(Icons.remove_circle),
+                onTap: _removeTime,
+              ),
+              title: Text(concatHoursList(hoursSelected)),
+              trailing: GestureDetector(
+                  child: Icon(Icons.add_circle), onTap: _pickTime),
             ),
-            Padding(padding: EdgeInsets.all(12)),
+            Padding(padding: EdgeInsets.all(8)),
             Text("Quantidade disponível: "),
             TextField(
               onChanged: (value) {
-                drugAmmount = value as int;
+                drugAmmount = int.parse(value);
               },
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                WhitelistingTextInputFormatter.digitsOnly
+              ],
               decoration: InputDecoration(
                   hintText: 'Entre a quantiade de remédio disponível'),
             ),
             Padding(padding: EdgeInsets.all(12)),
-            Text("Entre os horários do remédio:"),
+            Text("Dias de uso: "),
             Padding(padding: EdgeInsets.all(8)),
-            ListTile(
-              title: Text(concatHoursList(hoursSelected)),
-              trailing: Icon(Icons.add_circle),
-              onTap: _pickTime,
+            DaySelector(
+              onChange: (value) {
+                daysSelected = value;
+              },
+              mode: DaySelector.modeFull,
             )
           ],
         ),
@@ -110,11 +97,10 @@ class _MedicineCreatorState extends State<MedicineCreator> {
   String concatHoursList(List<String> list) {
     var concatenate = StringBuffer();
 
-    for (int i = 0; i < list.length; i++){
+    for (int i = 0; i < list.length; i++) {
       concatenate.write(list[i]);
 
-      if (i != (list.length-1))
-        concatenate.write("; ");
+      if (i != (list.length - 1)) concatenate.write("; ");
     }
 
     print(concatenate); // displays 'onetwothree'
@@ -130,17 +116,62 @@ class _MedicineCreatorState extends State<MedicineCreator> {
 
     if (t != null) {
       setState(() {
-        hoursSelected.add("${t.hour}:${t.minute}");
+        var minuto = (t.minute < 10) ? "0${t.minute}" : "${t.minute}";
+        hoursSelected.add("${t.hour}:$minuto");
       });
     }
   }
 
-  _saveMedicine(){
+  _removeTime() {
+    setState(() {
+      hoursSelected.removeAt(hoursSelected.length - 1);
+    });
+  }
+
+  _saveMedicine() {
+    String erro = "";
+
+    if (name == ""){
+      erro += "- Sem Nome. Digite um nome\n";
+    }
+    if(drugAmmount == 0){
+      erro += "- Sem quantidade de remédios. Digite um valor\n";
+    }
+    if(daysSelected == 0){
+      erro += "- Sem dias selecionados. Selecione pelo menos um dia\n";
+    }
+    if(hoursSelected.length == 0){
+      erro += "- Sem horários definidos. Selecione pelo menos um horário\n";
+
+    }
+
+    print(erro);
+
+    if (erro == ""){
     Medicine med = Medicine(
         name: name,
         drugAmmount: drugAmmount,
         daysSelected: daysSelected,
         hoursSelected: hoursSelected);
     Navigator.pop(context, med);
+    }
+    else{
+      var dialog = Dialog(
+      child: Container(
+        width: 320,
+        height: 150,
+        margin: EdgeInsets.all(10),
+        child: Column(
+          children: <Widget>[
+            Center(
+              child: Center(child: Text(erro, style: TextStyle(color: Colors.red),))
+            ),
+          ],
+        ),
+      ),
+    );
+
+    showDialog(context: context, builder: (BuildContext context) => dialog);
+    }
   }
 }
