@@ -130,11 +130,11 @@ class _MedicineDetailsState extends State<MedicineDetails> {
           boxShadow: [
       BoxShadow(
         color: Theme.of(context).focusColor,
-        blurRadius: 5.0, // has the effect of softening the shadow
-        spreadRadius: 5.0, // has the effect of extending the shadow
+        blurRadius: 5.0,
+        spreadRadius: 5.0, 
         offset: Offset(
-          5.0, // horizontal, move right 10
-          5.0, // vertical, move down 10
+          5.0, 
+          5.0,
         ),
       )
     ],

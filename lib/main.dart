@@ -90,8 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _createNewCardDetails().then((Medicine result) {
       var medicineValue = result;
       if (result == null) {
-        Scaffold.of(context).showSnackBar(
-            SnackBar(content: Text("Criação cancelada!")));
+        Scaffold.of(context)
+            .showSnackBar(SnackBar(content: Text("Criação cancelada!")));
       } else {
         setState(() {
           _counter++;
