@@ -4,6 +4,7 @@ import 'Medicine.dart';
 import 'AppStateNotifier.dart';
 import 'MedicineCreator.dart';
 import 'MedicineCard.dart';
+import 'Map.dart';
 
 void main() {
   runApp(
@@ -50,6 +51,16 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.place),
+            onPressed: () {
+              Navigator.push(context, 
+              MaterialPageRoute(builder: (context) => Map() )
+              );
+            },
+          )
+        ],
         title: GestureDetector(
             onDoubleTap: () {
               print("Double Tap!");
@@ -67,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(child: getList()),
             Text(
               (_counter < 2) ? '$_counter Remédio' : '$_counter Remédios',
-              style: Theme.of(context).textTheme.title,
+              style: Theme.of(context).textTheme.headline6,
             ),
           ],
         ),
