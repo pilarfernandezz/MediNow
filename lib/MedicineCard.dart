@@ -10,7 +10,7 @@ class MedicineCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Image(image: AssetImage('lib/assets/remedio.png'),height: 45, width: 45, ),
+        leading: CircleAvatar(backgroundImage: getImage() ),
         title: Text(drug.name),
         trailing: Icon(Icons.keyboard_arrow_right),
         selected: false,
@@ -21,5 +21,12 @@ class MedicineCard extends StatelessWidget {
         }
       ),
     );
+  }
+
+  ImageProvider<dynamic> getImage(){
+    if(drug.image != null)
+      return drug.image.image;
+    else
+      return AssetImage('lib/assets/remedio.png');
   }
 }

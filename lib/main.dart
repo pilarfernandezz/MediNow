@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void createNewCard(BuildContext context) {
-    _createNewCardDetails().then((Medicine result) {
+    _createNewCardCreator().then((Medicine result) {
       var medicineValue = result;
       if (result == null) {
         Scaffold.of(context)
@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<Medicine> _createNewCardDetails() async {
+  Future<Medicine> _createNewCardCreator() async {
     var result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => MedicineCreator()),
