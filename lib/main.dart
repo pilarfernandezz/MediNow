@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:day_selector/day_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Medicine.dart';
@@ -42,9 +45,22 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   List<Medicine> cardsList = List<Medicine>();
   bool dark = false;
+  Timer timer;
 
   Widget cardTemplate(medicamento) {
     return MedicineCard(drug: medicamento);
+  }
+
+  @override
+  void initState() {
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _isDrugTime());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -55,9 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: Icon(Icons.place),
             onPressed: () {
-              Navigator.push(context, 
-              MaterialPageRoute(builder: (context) => Map() )
-              );
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Map()));
             },
           )
         ],
@@ -136,6 +151,114 @@ class _MyHomePageState extends State<MyHomePage> {
     else {
       print("Temos remedio");
       return result;
+    }
+  }
+
+  _isDrugTime() {
+    DateTime time = DateTime.now();
+    for (Medicine drug in cardsList) {
+      for (String subscribedTime in drug.hoursSelected) {
+        var splitedTime = subscribedTime.split(":");
+        int hour = int.parse(splitedTime.elementAt(0));
+        int minute = int.parse(splitedTime.elementAt(1));
+        if (time.hour == hour && time.minute == minute) {
+          print("hora certa");
+          if (DaySelector.monday & drug.daysSelected == DaySelector.monday) {
+            print('monday selected');
+            if (time.weekday == DateTime.monday) {
+              print("Tomar remédio: ${drug.name}");
+              setState(() {
+                if (drug.drugAmmount > 0) {
+                  drug.drugAmmount--;
+                } else {
+                  print("Acabou o remédio: ${drug.name}");
+                }
+              });
+            }
+          }
+          if (DaySelector.tuesday & drug.daysSelected == DaySelector.tuesday) {
+            print('tuesday selected');
+            if (time.weekday == DateTime.tuesday) {
+              print("Tomar remédio: ${drug.name}");
+              setState(() {
+                if (drug.drugAmmount > 0) {
+                  drug.drugAmmount--;
+                } else {
+                  print("Acabou o remédio: ${drug.name}");
+                }
+              });
+            }
+          }
+          if (DaySelector.wednesday & drug.daysSelected ==
+              DaySelector.wednesday) {
+            print('wednesday selected');
+            if (time.weekday == DateTime.wednesday) {
+              print("Tomar remédio: ${drug.name}");
+              setState(() {
+                if (drug.drugAmmount > 0) {
+                  drug.drugAmmount--;
+                } else {
+                  print("Acabou o remédio: ${drug.name}");
+                }
+              });
+            }
+          }
+          if (DaySelector.thursday & drug.daysSelected ==
+              DaySelector.thursday) {
+            print('thursday selected');
+            if (time.weekday == DateTime.thursday) {
+              print("Tomar remédio: ${drug.name}");
+              setState(() {
+                if (drug.drugAmmount > 0) {
+                  drug.drugAmmount--;
+                } else {
+                  print("Acabou o remédio: ${drug.name}");
+                }
+              });
+            }
+          }
+          if (DaySelector.friday & drug.daysSelected == DaySelector.friday) {
+            print('friday selected');
+            if (time.weekday == DateTime.friday) {
+              print("Tomar remédio: ${drug.name}");
+              setState(() {
+                if (drug.drugAmmount > 0) {
+                  drug.drugAmmount--;
+                } else {
+                  print("Acabou o remédio: ${drug.name}");
+                }
+              });
+            }
+          }
+          if (DaySelector.saturday & drug.daysSelected ==
+              DaySelector.saturday) {
+            print('saturday selected');
+            if (time.weekday == DateTime.saturday) {
+              print("Tomar remédio: ${drug.name}");
+              setState(() {
+                if (drug.drugAmmount > 0) {
+                  drug.drugAmmount--;
+                } else {
+                  print("Acabou o remédio: ${drug.name}");
+                }
+              });
+            }
+          }
+          if (DaySelector.sunday & drug.daysSelected == DaySelector.sunday) {
+            print('sunday selected');
+            if (time.weekday == DateTime.sunday) {
+              print("Tomar remédio: ${drug.name}");
+              setState(() {
+                if (drug.drugAmmount > 0) {
+                  drug.drugAmmount--;
+                } else {
+                  print("Acabou o remédio: ${drug.name}");
+                }
+              });
+            }
+          }
+        }
+      }
     }
   }
 }

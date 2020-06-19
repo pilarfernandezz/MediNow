@@ -222,6 +222,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                       });
                     },
                     mode: DaySelector.modeFull,
+                    value: drug.daysSelected,
                   ),
                 ],
               ),
