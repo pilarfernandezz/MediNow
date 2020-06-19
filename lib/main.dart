@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:day_selector/day_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:trabalho_1/MedicineDetails.dart';
 import 'Medicine.dart';
 import 'AppStateNotifier.dart';
 import 'MedicineCreator.dart';
@@ -43,9 +46,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  List<Medicine> cardsList = List<Medicine>();
+  List<Medicine> drugsList = List<Medicine>();
   bool dark = false;
   Timer timer;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  String drugNotificationName = "";
 
   Widget cardTemplate(medicamento) {
     return MedicineCard(drug: medicamento);
@@ -53,7 +59,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _isDrugTime());
+    initNotification();
+    timer = Timer.periodic(Duration(minutes: 1), (Timer t) => _isDrugTime());
     super.initState();
   }
 
@@ -91,6 +98,10 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(child: getList()),
+            RaisedButton(
+              onPressed: showNotificationNoDrug,
+              child: Text("Mostrar notificação"),
+            ),
             Text(
               (_counter < 2) ? '$_counter Remédio' : '$_counter Remédios',
               style: Theme.of(context).textTheme.headline6,
@@ -121,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
       } else {
         setState(() {
           _counter++;
-          cardsList.add(medicineValue);
+          drugsList.add(medicineValue);
         });
       }
     });
@@ -136,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     } else {
       return ListView(
-        children: cardsList.map((item) => cardTemplate(item)).toList(),
+        children: drugsList.map((item) => cardTemplate(item)).toList(),
       );
     }
   }
@@ -156,109 +167,136 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _isDrugTime() {
     DateTime time = DateTime.now();
-    for (Medicine drug in cardsList) {
+    List<Medicine> drugNotificationList = List<Medicine>();
+    for (Medicine drug in drugsList) {
       for (String subscribedTime in drug.hoursSelected) {
         var splitedTime = subscribedTime.split(":");
         int hour = int.parse(splitedTime.elementAt(0));
         int minute = int.parse(splitedTime.elementAt(1));
+
         if (time.hour == hour && time.minute == minute) {
           print("hora certa");
+
           if (DaySelector.monday & drug.daysSelected == DaySelector.monday) {
             print('monday selected');
             if (time.weekday == DateTime.monday) {
-              print("Tomar remédio: ${drug.name}");
-              setState(() {
-                if (drug.drugAmmount > 0) {
-                  drug.drugAmmount--;
-                } else {
-                  print("Acabou o remédio: ${drug.name}");
-                }
-              });
+              drugNotificationList.add(drug);
             }
           }
           if (DaySelector.tuesday & drug.daysSelected == DaySelector.tuesday) {
             print('tuesday selected');
             if (time.weekday == DateTime.tuesday) {
-              print("Tomar remédio: ${drug.name}");
-              setState(() {
-                if (drug.drugAmmount > 0) {
-                  drug.drugAmmount--;
-                } else {
-                  print("Acabou o remédio: ${drug.name}");
-                }
-              });
+              drugNotificationList.add(drug);
             }
           }
           if (DaySelector.wednesday & drug.daysSelected ==
               DaySelector.wednesday) {
             print('wednesday selected');
             if (time.weekday == DateTime.wednesday) {
-              print("Tomar remédio: ${drug.name}");
-              setState(() {
-                if (drug.drugAmmount > 0) {
-                  drug.drugAmmount--;
-                } else {
-                  print("Acabou o remédio: ${drug.name}");
-                }
-              });
+              drugNotificationList.add(drug);
             }
           }
           if (DaySelector.thursday & drug.daysSelected ==
               DaySelector.thursday) {
             print('thursday selected');
             if (time.weekday == DateTime.thursday) {
-              print("Tomar remédio: ${drug.name}");
-              setState(() {
-                if (drug.drugAmmount > 0) {
-                  drug.drugAmmount--;
-                } else {
-                  print("Acabou o remédio: ${drug.name}");
-                }
-              });
+              drugNotificationList.add(drug);
             }
           }
           if (DaySelector.friday & drug.daysSelected == DaySelector.friday) {
             print('friday selected');
             if (time.weekday == DateTime.friday) {
-              print("Tomar remédio: ${drug.name}");
-              setState(() {
-                if (drug.drugAmmount > 0) {
-                  drug.drugAmmount--;
-                } else {
-                  print("Acabou o remédio: ${drug.name}");
-                }
-              });
+              drugNotificationList.add(drug);
             }
           }
           if (DaySelector.saturday & drug.daysSelected ==
               DaySelector.saturday) {
             print('saturday selected');
             if (time.weekday == DateTime.saturday) {
-              print("Tomar remédio: ${drug.name}");
-              setState(() {
-                if (drug.drugAmmount > 0) {
-                  drug.drugAmmount--;
-                } else {
-                  print("Acabou o remédio: ${drug.name}");
-                }
-              });
+              drugNotificationList.add(drug);
             }
           }
           if (DaySelector.sunday & drug.daysSelected == DaySelector.sunday) {
             print('sunday selected');
             if (time.weekday == DateTime.sunday) {
-              print("Tomar remédio: ${drug.name}");
-              setState(() {
-                if (drug.drugAmmount > 0) {
-                  drug.drugAmmount--;
-                } else {
-                  print("Acabou o remédio: ${drug.name}");
-                }
-              });
+              drugNotificationList.add(drug);
             }
           }
         }
       }
     }
+
+    while (drugNotificationList.length > 0) {
+      var currentDrug = drugNotificationList.removeAt(0);
+      setState(() {
+        drugNotificationName = currentDrug.name;
+      });
+      drugTime(currentDrug);
+      sleep(Duration(seconds: 5));
+    }
+  }
+
+  void drugTime(Medicine drug) {
+    setState(() {
+      if (drug.drugAmmount > 0) {
+        showNotification();
+        drug.drugAmmount--;
+      } else {
+        showNotificationNoDrug();
+      }
+    });
+  }
+
+  initNotification() async {
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettings =
+        InitializationSettings(initializationSettingsAndroid, null);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: selectNotification);
+  }
+
+  Future selectNotification(String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+
+    for (Medicine drug in drugsList) {
+      if (drug.name == payload) {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MedicineDetails(drug: drug)),
+        );
+        break;
+      }
+    }
+  }
+
+  showNotification() async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(0,
+        'Tomar remédio $drugNotificationName', null, platformChannelSpecifics,
+        payload: '$drugNotificationName');
+  }
+
+  showNotificationNoDrug() async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0,
+        'Acabou o remédio: $drugNotificationName.',
+        'Estava na hora de tomá-lo.',
+        platformChannelSpecifics,
+        payload: '$drugNotificationName');
   }
 }
