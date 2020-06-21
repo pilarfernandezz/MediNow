@@ -1,11 +1,5 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:day_selector/day_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:trabalho_1/MedicineDetails.dart';
 import 'Medicine.dart';
 import 'AppStateNotifier.dart';
 import 'MedicineCreator.dart';
@@ -45,29 +39,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Widget list;
+
   int _counter = 0;
-  List<Medicine> drugsList = List<Medicine>();
+  List<Medicine> cardsList = List<Medicine>();
   bool dark = false;
-  Timer timer;
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  String drugNotificationName = "";
 
   Widget cardTemplate(medicamento) {
     return MedicineCard(drug: medicamento);
   }
 
-  @override
-  void initState() {
-    initNotification();
-    timer = Timer.periodic(Duration(minutes: 1), (Timer t) => _isDrugTime());
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    timer.cancel();
-    super.dispose();
+  Future<Null> refreshList() async {
+    await Future.delayed(Duration(seconds: 1));
+    setState(() {
+      getList();
+    });
+    return null;
   }
 
   @override
@@ -93,21 +80,18 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             child: Text(widget.title)),
       ),
-      body: Center(
+      body: RefreshIndicator(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(child: getList()),
-            RaisedButton(
-              onPressed: showNotificationNoDrug,
-              child: Text("Mostrar notificação"),
-            ),
             Text(
               (_counter < 2) ? '$_counter Remédio' : '$_counter Remédios',
               style: Theme.of(context).textTheme.headline6,
             ),
           ],
         ),
+        onRefresh: refreshList,
       ),
       floatingActionButton: Builder(
         builder: (BuildContext context) {
@@ -124,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void createNewCard(BuildContext context) {
-    _createNewCardCreator().then((Medicine result) {
+    _createNewCardDetails().then((Medicine result) {
       var medicineValue = result;
       if (result == null) {
         Scaffold.of(context)
@@ -132,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
       } else {
         setState(() {
           _counter++;
-          drugsList.add(medicineValue);
+          cardsList.add(medicineValue);
         });
       }
     });
@@ -146,13 +130,16 @@ class _MyHomePageState extends State<MyHomePage> {
             style: TextStyle(fontSize: 20, color: Colors.grey)),
       );
     } else {
-      return ListView(
-        children: drugsList.map((item) => cardTemplate(item)).toList(),
-      );
+      setState(() {
+        list = ListView(
+          children: cardsList.map((item) => cardTemplate(item)).toList(),
+        );
+      });
+      return list;
     }
   }
 
-  Future<Medicine> _createNewCardCreator() async {
+  Future<Medicine> _createNewCardDetails() async {
     var result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => MedicineCreator()),
@@ -163,140 +150,5 @@ class _MyHomePageState extends State<MyHomePage> {
       print("Temos remedio");
       return result;
     }
-  }
-
-  _isDrugTime() {
-    DateTime time = DateTime.now();
-    List<Medicine> drugNotificationList = List<Medicine>();
-    for (Medicine drug in drugsList) {
-      for (String subscribedTime in drug.hoursSelected) {
-        var splitedTime = subscribedTime.split(":");
-        int hour = int.parse(splitedTime.elementAt(0));
-        int minute = int.parse(splitedTime.elementAt(1));
-
-        if (time.hour == hour && time.minute == minute) {
-          print("hora certa");
-
-          if (DaySelector.monday & drug.daysSelected == DaySelector.monday) {
-            print('monday selected');
-            if (time.weekday == DateTime.monday) {
-              drugNotificationList.add(drug);
-            }
-          }
-          if (DaySelector.tuesday & drug.daysSelected == DaySelector.tuesday) {
-            print('tuesday selected');
-            if (time.weekday == DateTime.tuesday) {
-              drugNotificationList.add(drug);
-            }
-          }
-          if (DaySelector.wednesday & drug.daysSelected ==
-              DaySelector.wednesday) {
-            print('wednesday selected');
-            if (time.weekday == DateTime.wednesday) {
-              drugNotificationList.add(drug);
-            }
-          }
-          if (DaySelector.thursday & drug.daysSelected ==
-              DaySelector.thursday) {
-            print('thursday selected');
-            if (time.weekday == DateTime.thursday) {
-              drugNotificationList.add(drug);
-            }
-          }
-          if (DaySelector.friday & drug.daysSelected == DaySelector.friday) {
-            print('friday selected');
-            if (time.weekday == DateTime.friday) {
-              drugNotificationList.add(drug);
-            }
-          }
-          if (DaySelector.saturday & drug.daysSelected ==
-              DaySelector.saturday) {
-            print('saturday selected');
-            if (time.weekday == DateTime.saturday) {
-              drugNotificationList.add(drug);
-            }
-          }
-          if (DaySelector.sunday & drug.daysSelected == DaySelector.sunday) {
-            print('sunday selected');
-            if (time.weekday == DateTime.sunday) {
-              drugNotificationList.add(drug);
-            }
-          }
-        }
-      }
-    }
-
-    while (drugNotificationList.length > 0) {
-      var currentDrug = drugNotificationList.removeAt(0);
-      setState(() {
-        drugNotificationName = currentDrug.name;
-      });
-      drugTime(currentDrug);
-      sleep(Duration(seconds: 5));
-    }
-  }
-
-  void drugTime(Medicine drug) {
-    setState(() {
-      if (drug.drugAmmount > 0) {
-        showNotification();
-        drug.drugAmmount--;
-      } else {
-        showNotificationNoDrug();
-      }
-    });
-  }
-
-  initNotification() async {
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettings =
-        InitializationSettings(initializationSettingsAndroid, null);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: selectNotification);
-  }
-
-  Future selectNotification(String payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: ' + payload);
-    }
-
-    for (Medicine drug in drugsList) {
-      if (drug.name == payload) {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => MedicineDetails(drug: drug)),
-        );
-        break;
-      }
-    }
-  }
-
-  showNotification() async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(0,
-        'Tomar remédio $drugNotificationName', null, platformChannelSpecifics,
-        payload: '$drugNotificationName');
-  }
-
-  showNotificationNoDrug() async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0,
-        'Acabou o remédio: $drugNotificationName.',
-        'Estava na hora de tomá-lo.',
-        platformChannelSpecifics,
-        payload: '$drugNotificationName');
   }
 }
