@@ -39,7 +39,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
             onPressed: () {
               print("pressed");
               setState(() {
-                editMode = !editMode; 
+                editMode = !editMode;
               });
             },
           )
@@ -55,15 +55,15 @@ class _MedicineDetailsState extends State<MedicineDetails> {
           ),
           GestureDetector(
             child: createBox(Text(drug.drugAmmount.toString())),
-            onTap: (editMode) ? _dialogAmmount: null,
+            onTap: (editMode) ? _dialogAmmount : null,
           ),
           GestureDetector(
-              child: createBox(Text(getDays(drug.daysSelected))),
-              onTap: (editMode) ? _dialogDays : null,
-              ),
+            child: createBox(Text(getDays(drug.daysSelected))),
+            onTap: (editMode) ? _dialogDays : null,
+          ),
           GestureDetector(
             child: createBox(createTextDinamically(drug.hoursSelected)),
-            onTap: (editMode) ? _dialogHours: null,
+            onTap: (editMode) ? _dialogHours : null,
           ),
           GestureDetector(
             child: createBox(Text("Mais informações")),
@@ -127,19 +127,19 @@ class _MedicineDetailsState extends State<MedicineDetails> {
           child: widget,
         ),
         decoration: BoxDecoration(
-          boxShadow: [
-      BoxShadow(
-        color: Theme.of(context).focusColor,
-        blurRadius: 5.0,
-        spreadRadius: 5.0, 
-        offset: Offset(
-          5.0, 
-          5.0,
-        ),
-      )
-    ],
-        color: Theme.of(context).backgroundColor,
-        borderRadius: BorderRadius.circular(50)));
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context).focusColor,
+                blurRadius: 5.0,
+                spreadRadius: 5.0,
+                offset: Offset(
+                  5.0,
+                  5.0,
+                ),
+              )
+            ],
+            color: Theme.of(context).backgroundColor,
+            borderRadius: BorderRadius.circular(50)));
   }
 
   void _dialogName() {
@@ -190,7 +190,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
                 WhitelistingTextInputFormatter.digitsOnly
               ],
               decoration:
-                  InputDecoration(hintText: 'Entre a quantiade de remédio'),
+                  InputDecoration(hintText: 'Entre a quantidade de remédio'),
             )),
           ],
         ),
@@ -287,7 +287,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
     );
   }
 
-  IconData editIcon(){
+  IconData editIcon() {
     return (editMode) ? Icons.lock : Icons.edit;
   }
 }
