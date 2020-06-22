@@ -101,14 +101,13 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Expanded(child: getList()),
-              RaisedButton(
-                onPressed: showNotificationNoDrug,
-                child: Text("Mostrar notificação"),
-              ),
-              Text(
-                (_counter < 2) ? '$_counter Remédio' : '$_counter Remédios',
-                style: Theme.of(context).textTheme.headline6,
-              ),
+              GestureDetector(
+                onLongPress: () => showNotificationNoDrug(),
+                child: Text(
+                  (_counter < 2) ? '$_counter Remédio' : '$_counter Remédios',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              )
             ],
           ),
         ),
