@@ -119,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               createNewCard(context);
             },
-            tooltip: 'Increment',
+            tooltip: 'Criar novo remédio',
             child: Icon(Icons.add),
           );
         },

@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:camera/camera.dart';
 import 'package:day_selector/day_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'Medicine.dart';
 
 import 'MedicineHttpRequest.dart';
+import 'Photo.dart';
 
 class MedicineDetails extends StatefulWidget {
   final Medicine drug;
@@ -50,11 +54,11 @@ class _MedicineDetailsState extends State<MedicineDetails> {
         crossAxisCount: 2,
         children: <Widget>[
           GestureDetector(
-            child: createBox(Text(drug.name)),
+            child: createBox(Text("Nome do Remédio:\n"+drug.name,)),
             onTap: (editMode) ? _dialogName : null,
           ),
           GestureDetector(
-            child: createBox(Text(drug.drugAmmount.toString())),
+            child: createBox(Text("Quantidade do Remédio:\n"+drug.drugAmmount.toString())),
             onTap: (editMode) ? _dialogAmmount : null,
           ),
           GestureDetector(
@@ -62,12 +66,16 @@ class _MedicineDetailsState extends State<MedicineDetails> {
             onTap: (editMode) ? _dialogDays : null,
           ),
           GestureDetector(
-            child: createBox(createTextDinamically(drug.hoursSelected)),
+            child: createBox(Text("Horas do Remédio:\n"+concatHoursList(drug.hoursSelected))),
             onTap: (editMode) ? _dialogHours : null,
           ),
           GestureDetector(
             child: createBox(Text("Mais informações")),
             onTap: (editMode) ? null : _goToHttp,
+          ),
+          GestureDetector(
+            child: createBox(CircleAvatar(backgroundImage: getImage(), maxRadius: 85,)),
+            onTap: (editMode) ? getPhoto : null,
           )
         ],
       ),
@@ -100,10 +108,6 @@ class _MedicineDetailsState extends State<MedicineDetails> {
     }
 
     return days;
-  }
-
-  Widget createTextDinamically(List<String> strList) {
-    return Text(concatHoursList(strList));
   }
 
   String concatHoursList(List<String> list) {
@@ -285,6 +289,33 @@ class _MedicineDetailsState extends State<MedicineDetails> {
       MaterialPageRoute(
           builder: (context) => MedicineHttpRequest(name: drug.name)),
     );
+  }
+
+  ImageProvider<dynamic> getImage(){
+    if(drug.image != null)
+      return drug.image.image;
+    else
+      return AssetImage('lib/assets/remedio.png');
+  }
+
+  getPhoto() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    // Obtain a list of the available cameras on the device.
+    final cameras = await availableCameras();
+
+    // Get a specific camera from the list of available cameras.
+    final firstCamera = cameras.first;
+
+    var result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Photo(camera: firstCamera)),
+    );
+    if (result != null) {
+      setState(() {
+        drug.image = Image.file(File(result));
+      });
+    }
   }
 
   IconData editIcon() {
