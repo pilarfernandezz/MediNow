@@ -67,7 +67,7 @@ class _MedicineDetailsState extends State<MedicineDetails> {
           ),
           GestureDetector(
             child: createBox(Text("Mais informações")),
-            onTap: _goToHttp,
+            onTap: (editMode) ? null : _goToHttp,
           )
         ],
       ),
