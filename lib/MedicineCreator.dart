@@ -82,8 +82,11 @@ class _MedicineCreatorState extends State<MedicineCreator> {
           Padding(padding: EdgeInsets.all(8)),
           DaySelector(
             onChange: (value) {
+              setState(() {
               daysSelected = value;
+              });
             },
+            value: daysSelected,
             mode: DaySelector.modeFull,
           ),
           Padding(padding: EdgeInsets.all(8)),
